@@ -125,6 +125,7 @@ export function ChatPanel({
         </div>
       )}
       <form
+        data-chat-input
         onSubmit={handleSubmit}
         className={cn('max-w-3xl w-full mx-auto relative')}
       >
