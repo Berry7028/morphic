@@ -3,34 +3,32 @@ import { notFound, redirect } from 'next/navigation'
 import { getChat } from '@/lib/actions/chat'
 import { getCurrentUserId } from '@/lib/auth/get-current-user'
 import { getModels } from '@/lib/config/models'
-import { ExtendedCoreMessage, SearchResults } from '@/lib/types' // Added SearchResults
+import { ExtendedCoreMessage, SearchResults } from '@/lib/types'
 import { convertToUIMessages } from '@/lib/utils'
 
 import { Chat } from '@/components/chat'
+import { CanvasProvider } from '@/components/canvas/canvas-provider'
+import { CanvasShell } from '@/components/canvas/canvas-shell'
+import InspectorPanel from '@/components/canvas/inspector-panel'
+import GalleryPanel from '@/components/canvas/gallery-panel'
+import Dock from '@/components/canvas/dock'
+import CommandPalette from '@/components/canvas/command-palette'
 
 export const maxDuration = 60
 
-export async function generateMetadata(props: {
-  params: Promise<{ id: string }>
-}) {
+export async function generateMetadata(props: { params: Promise<{ id: string }> }) {
   const { id } = await props.params
   const userId = await getCurrentUserId()
-  const chat = await getChat(id, userId || 'anonymous') // Ensure fallback for userId
+  const chat = await getChat(id, userId || 'anonymous')
 
-  let metadata: {
-    title: string
-    openGraph?: { images?: { url: string; width?: number; height?: number }[] }
-  } = {
+  let metadata: { title: string; openGraph?: { images?: { url: string; width?: number; height?: number }[] } } = {
     title: chat?.title?.toString().slice(0, 50) || 'Search'
   }
 
   if (chat && chat.messages) {
-    const dataMessage = chat.messages.find(
-      (msg: ExtendedCoreMessage) => msg.role === 'data'
-    )
+    const dataMessage = chat.messages.find((msg: ExtendedCoreMessage) => msg.role === 'data')
 
     if (dataMessage && dataMessage.content) {
-      // Assuming dataMessage.content is of type SearchResults or a compatible structure
       const searchData = dataMessage.content as SearchResults
       if (searchData.images && searchData.images.length > 0) {
         const firstImage = searchData.images[0]
@@ -44,26 +42,20 @@ export async function generateMetadata(props: {
 
         if (imageUrl) {
           metadata.openGraph = {
-            images: [{ url: imageUrl, width: 1200, height: 630 }] // Standard OG image dimensions
+            images: [{ url: imageUrl, width: 1200, height: 630 }]
           }
         }
       }
     }
   }
-  // If no image is found, metadata.openGraph.images will remain undefined,
-  // allowing fallback to parent or global OG image settings.
   return metadata
 }
 
-// ... rest of the file (default export SearchPage) remains the same
-export default async function SearchPage(props: {
-  params: Promise<{ id: string }>
-}) {
+export default async function SearchPage(props: { params: Promise<{ id: string }> }) {
   const userId = await getCurrentUserId()
   const { id } = await props.params
 
   const chat = await getChat(id, userId)
-  // convertToUIMessages for useChat hook
   const messages = convertToUIMessages(chat?.messages || [])
 
   if (!chat) {
@@ -75,5 +67,16 @@ export default async function SearchPage(props: {
   }
 
   const models = await getModels()
-  return <Chat id={id} savedMessages={messages} models={models} />
+
+  return (
+    <CanvasProvider>
+      <CommandPalette />
+      <CanvasShell
+        left={<InspectorPanel chatId={id} />}
+        right={<GalleryPanel />}
+        bottom={<Dock />}
+        center={<Chat id={id} savedMessages={messages} models={models} />}
+      />
+    </CanvasProvider>
+  )
 }
