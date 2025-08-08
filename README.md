@@ -53,6 +53,7 @@ The following AI providers are supported:
 - Fireworks
 - xAI (Grok)
 - OpenAI Compatible
+- LMStudio
 
 Models are configured in `public/config/models.json`. Each model requires its corresponding API key to be set in the environment variables. See [Configuration Guide](docs/CONFIGURATION.md) for details.
 

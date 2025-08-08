@@ -37,6 +37,10 @@ export const registry = createProviderRegistry({
     apiKey: process.env.OPENAI_COMPATIBLE_API_KEY,
     baseURL: process.env.OPENAI_COMPATIBLE_API_BASE_URL
   }),
+  lmstudio: createOpenAI({
+    apiKey: 'lm-studio',
+    baseURL: process.env.LMSTUDIO_BASE_URL || 'http://localhost:1234/v1'
+  }),
   xai
 })
 
@@ -114,6 +118,8 @@ export function isProviderEnabled(providerId: string): boolean {
         !!process.env.OPENAI_COMPATIBLE_API_KEY &&
         !!process.env.OPENAI_COMPATIBLE_API_BASE_URL
       )
+    case 'lmstudio':
+      return !!process.env.LMSTUDIO_BASE_URL
     default:
       return false
   }
@@ -137,6 +143,9 @@ export function getToolCallModel(model?: string) {
       return getModel(`ollama:${ollamaModel}`)
     case 'google':
       return getModel('google:gemini-2.0-flash')
+    case 'lmstudio':
+      // LMStudioでは特定のツール呼び出し専用モデルを強制せず、選択中のモデルを優先
+      return getModel(`lmstudio:${modelName || 'ministral-8b-instruct-2410'}`)
     default:
       return getModel('openai:gpt-4o-mini')
   }

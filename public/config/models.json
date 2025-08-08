@@ -207,6 +207,15 @@
       "providerId": "openai-compatible",
       "enabled": true,
       "toolCallType": "native"
+    },
+    {
+      "id": "ministral-8b-instruct-2410",
+      "name": "Ministral 8B Instruct",
+      "provider": "LMStudio",
+      "providerId": "lmstudio",
+      "enabled": true,
+      "toolCallType": "native",
+      "toolCallModel": "ministral-8b-instruct-2410"
     }
   ]
 }
