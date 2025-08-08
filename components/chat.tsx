@@ -13,6 +13,7 @@ import { cn } from '@/lib/utils'
 
 import { ChatMessages } from './chat-messages'
 import { ChatPanel } from './chat-panel'
+import { ModelSelector } from './model-selector'
 
 // Define section structure
 interface ChatSection {
@@ -210,6 +211,12 @@ export function Chat({
       )}
       data-testid="full-chat"
     >
+      {/* Top-left model selector like ChatGPT */}
+      {models && models.length > 0 && (
+        <div className="absolute top-4 left-4 z-20">
+          <ModelSelector models={models} />
+        </div>
+      )}
       <ChatMessages
         sections={sections}
         data={data}
