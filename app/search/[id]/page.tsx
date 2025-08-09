@@ -6,27 +6,33 @@ import { getModels } from '@/lib/config/models'
 import { ExtendedCoreMessage, SearchResults } from '@/lib/types'
 import { convertToUIMessages } from '@/lib/utils'
 
-import { Chat } from '@/components/chat'
 import { CanvasProvider } from '@/components/canvas/canvas-provider'
 import { CanvasShell } from '@/components/canvas/canvas-shell'
-import InspectorPanel from '@/components/canvas/inspector-panel'
-import GalleryPanel from '@/components/canvas/gallery-panel'
-import Dock from '@/components/canvas/dock'
 import CommandPalette from '@/components/canvas/command-palette'
+import GalleryPanel from '@/components/canvas/gallery-panel'
+import InspectorPanel from '@/components/canvas/inspector-panel'
+import { Chat } from '@/components/chat'
 
 export const maxDuration = 60
 
-export async function generateMetadata(props: { params: Promise<{ id: string }> }) {
+export async function generateMetadata(props: {
+  params: Promise<{ id: string }>
+}) {
   const { id } = await props.params
   const userId = await getCurrentUserId()
   const chat = await getChat(id, userId || 'anonymous')
 
-  let metadata: { title: string; openGraph?: { images?: { url: string; width?: number; height?: number }[] } } = {
+  let metadata: {
+    title: string
+    openGraph?: { images?: { url: string; width?: number; height?: number }[] }
+  } = {
     title: chat?.title?.toString().slice(0, 50) || 'Search'
   }
 
   if (chat && chat.messages) {
-    const dataMessage = chat.messages.find((msg: ExtendedCoreMessage) => msg.role === 'data')
+    const dataMessage = chat.messages.find(
+      (msg: ExtendedCoreMessage) => msg.role === 'data'
+    )
 
     if (dataMessage && dataMessage.content) {
       const searchData = dataMessage.content as SearchResults
@@ -51,7 +57,9 @@ export async function generateMetadata(props: { params: Promise<{ id: string }> 
   return metadata
 }
 
-export default async function SearchPage(props: { params: Promise<{ id: string }> }) {
+export default async function SearchPage(props: {
+  params: Promise<{ id: string }>
+}) {
   const userId = await getCurrentUserId()
   const { id } = await props.params
 
@@ -72,9 +80,8 @@ export default async function SearchPage(props: { params: Promise<{ id: string }
     <CanvasProvider>
       <CommandPalette />
       <CanvasShell
-        left={<InspectorPanel chatId={id} />}
+        left={<InspectorPanel />}
         right={<GalleryPanel />}
-        bottom={<Dock />}
         center={<Chat id={id} savedMessages={messages} models={models} />}
       />
     </CanvasProvider>

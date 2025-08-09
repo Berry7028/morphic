@@ -216,6 +216,15 @@
       "enabled": true,
       "toolCallType": "native",
       "toolCallModel": "ministral-8b-instruct-2410"
+    },
+    {
+      "id": "llama-3.2-3b-instruct",
+      "name": "Llama 3.2 3B Instruct",
+      "provider": "LMStudio",
+      "providerId": "lmstudio",
+      "enabled": true,
+      "toolCallType": "native",
+      "toolCallModel": "llama-3.2-3b-instruct"
     }
   ]
 }
