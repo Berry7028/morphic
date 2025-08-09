@@ -6,8 +6,10 @@ import { Analytics } from '@vercel/analytics/next'
 import { createClient } from '@/lib/supabase/server'
 import { cn } from '@/lib/utils'
 
+import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar'
 import { Toaster } from '@/components/ui/sonner'
 
+import AppSidebar from '@/components/app-sidebar'
 import ArtifactRoot from '@/components/artifact/artifact-root'
 import { ThemeProvider } from '@/components/theme-provider'
 
@@ -76,11 +78,12 @@ export default async function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-         <div className="flex flex-col min-h-screen">
-           <main className="flex flex-1 min-h-0">
-             <ArtifactRoot>{children}</ArtifactRoot>
-           </main>
-         </div>
+          <SidebarProvider>
+            <AppSidebar />
+            <SidebarInset>
+              <ArtifactRoot>{children}</ArtifactRoot>
+            </SidebarInset>
+          </SidebarProvider>
           <Toaster />
           <Analytics />
         </ThemeProvider>
